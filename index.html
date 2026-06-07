@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXON — Gaming Gear Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b12;
+  --bg2: #0c101a;
+  --bg3: #111722;
+  --cyan: #00d4ff;
+  --blue: #1a6ef2;
+  --border: rgba(0,212,255,0.15);
+  --border2: rgba(0,212,255,0.3);
+  --text: #e0e8f8;
+  --muted: #6a7a90;
+  --dim: #3a4a60;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;overflow-x:hidden;}
+
+/* CURSOR */
+body{cursor:none;}
+#cursor{position:fixed;width:10px;height:10px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,opacity .2s;}
+#cursor-ring{position:fixed;width:30px;height:30px;border:1px solid var(--cyan);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .1s;opacity:.5;}
+
+/* BACKGROUND GRID */
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:100;background:rgba(8,11,18,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 5%;}
+.nav-inner{display:flex;align-items:center;height:64px;gap:32px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-ring{width:36px;height:36px;border-radius:50%;border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-brand{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#fff;letter-spacing:4px;}
+.nav-links{display:flex;gap:4px;margin-right:auto;}
+.nav-link{padding:8px 16px;font-size:13px;color:var(--muted);text-decoration:none;border-radius:6px;transition:all .2s;position:relative;}
+.nav-link:hover,.nav-link.active{color:#fff;background:rgba(0,212,255,0.07);}
+.nav-link.active::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--cyan);border-radius:50%;}
+.nav-actions{display:flex;align-items:center;gap:12px;}
+.lang-toggle{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Cairo',sans-serif;transition:all .2s;}
+.lang-toggle:hover{border-color:var(--cyan);color:var(--cyan);}
+.cart-btn{position:relative;background:none;border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;}
+.cart-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.cart-count{position:absolute;top:-6px;right:-6px;background:var(--cyan);color:#000;width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* HERO */
+.hero{position:relative;height:100vh;display:flex;align-items:center;padding:0 5%;overflow:hidden;z-index:1;}
+.hero-bg{position:absolute;inset:0;overflow:hidden;}
+.hero-bg::before{content:'';position:absolute;top:20%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(26,110,242,0.12) 0%,transparent 70%);}
+.hero-bg::after{content:'';position:absolute;bottom:10%;left:30%;width:400px;height:400px;background:radial-gradient(circle,rgba(0,212,255,0.07) 0%,transparent 70%);}
+.hero-lines{position:absolute;inset:0;}
+.hero-lines svg{width:100%;height:100%;opacity:.15;}
+.hero-content{position:relative;z-index:2;max-width:600px;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,0.08);border:1px solid var(--border2);padding:6px 16px;border-radius:20px;font-size:12px;color:var(--cyan);letter-spacing:2px;margin-bottom:28px;}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}
+.hero-title{font-family:'Orbitron',monospace;font-size:clamp(36px,5vw,68px);font-weight:900;line-height:1.05;color:#fff;margin-bottom:20px;}
+.hero-title .accent{color:var(--cyan);}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:36px;max-width:480px;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
+.btn-primary{background:linear-gradient(135deg,var(--blue),#0d5fd4);color:#fff;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;border:none;cursor:pointer;font-family:'Cairo',sans-serif;transition:all .2s;display:inline-block;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,110,242,0.4);}
+.btn-outline{background:none;color:var(--cyan);padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;border:1px solid var(--border2);cursor:pointer;font-family:'Cairo',sans-serif;transition:all .2s;display:inline-block;}
+.btn-outline:hover{background:rgba(0,212,255,0.07);transform:translateY(-2px);}
+.hero-stats{position:absolute;left:5%;bottom:10%;display:flex;gap:40px;z-index:2;}
+.stat{text-align:center;}
+.stat-num{font-family:'Orbitron',monospace;font-size:28px;font-weight:700;color:var(--cyan);}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px;}
+.hero-scroll{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:2px;animation:bounce 2s infinite;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-8px);}}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:90px 5%;}
+.section-header{text-align:center;margin-bottom:60px;}
+.section-tag{display:inline-block;font-size:11px;color:var(--cyan);letter-spacing:3px;margin-bottom:14px;}
+.section-title{font-family:'Orbitron',monospace;font-size:clamp(24px,3vw,38px);font-weight:700;color:#fff;margin-bottom:14px;}
+.section-sub{font-size:15px;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.8;}
+
+/* CATEGORIES */
+.categories{background:var(--bg2);}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.cat-card{position:relative;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:32px 24px;cursor:pointer;transition:all .3s;overflow:hidden;text-decoration:none;color:inherit;}
+.cat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.05),transparent);opacity:0;transition:opacity .3s;}
+.cat-card:hover::before{opacity:1;}
+.cat-card:hover{border-color:var(--border2);transform:translateY(-4px);}
+.cat-icon{font-size:40px;margin-bottom:16px;display:block;}
+.cat-name{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;}
+.cat-name-ar{font-size:13px;color:var(--muted);margin-bottom:12px;}
+.cat-count{font-size:12px;color:var(--cyan);}
+.cat-arrow{position:absolute;top:24px;left:24px;color:var(--border2);font-size:20px;transition:all .3s;}
+.cat-card:hover .cat-arrow{color:var(--cyan);transform:translateX(-4px);}
+.cat-line{position:absolute;bottom:0;right:0;width:60%;height:2px;background:linear-gradient(90deg,transparent,var(--cyan));opacity:0;transition:opacity .3s;}
+.cat-card:hover .cat-line{opacity:1;}
+
+/* PRODUCTS */
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.prod-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .3s;position:relative;}
+.prod-card:hover{border-color:var(--border2);transform:translateY(-6px);}
+.prod-img{height:200px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:70px;position:relative;overflow:hidden;}
+.prod-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to top,var(--bg2),transparent);}
+.prod-badge{position:absolute;top:12px;right:12px;background:var(--cyan);color:#000;font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px;z-index:1;}
+.prod-badge.sale{background:#ef4444;color:#fff;}
+.prod-info{padding:18px;}
+.prod-cat{font-size:11px;color:var(--cyan);letter-spacing:2px;margin-bottom:6px;}
+.prod-name{font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;}
+.prod-name-en{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.prod-footer{display:flex;align-items:center;justify-content:space-between;}
+.prod-price{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--cyan);}
+.prod-price-old{font-size:12px;color:var(--muted);text-decoration:line-through;margin-right:6px;}
+.add-cart{background:linear-gradient(135deg,var(--blue),#0d5fd4);color:#fff;border:none;padding:8px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Cairo',sans-serif;transition:all .2s;}
+.add-cart:hover{transform:scale(1.05);}
+.prod-stars{font-size:12px;color:#f59e0b;margin-bottom:4px;}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.feat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px 20px;text-align:center;transition:border-color .3s;}
+.feat-card:hover{border-color:var(--border2);}
+.feat-icon{width:52px;height:52px;border-radius:50%;background:rgba(0,212,255,0.08);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 16px;}
+.feat-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:6px;}
+.feat-sub{font-size:12px;color:var(--muted);line-height:1.7;}
+
+/* CART SIDEBAR */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;}
+.cart-overlay.open{opacity:1;pointer-events:all;}
+.cart-sidebar{position:fixed;top:0;left:-420px;width:400px;height:100%;background:var(--bg2);border-right:1px solid var(--border);z-index:201;transition:left .3s;padding:24px;display:flex;flex-direction:column;overflow-y:auto;}
+.cart-sidebar.open{left:0;}
+.cart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.cart-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+.cart-items{flex:1;}
+.cart-empty{text-align:center;padding:40px;color:var(--muted);}
+.cart-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.cart-item-img{width:60px;height:60px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.cart-item-info{flex:1;}
+.cart-item-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;}
+.cart-item-price{font-size:14px;color:var(--cyan);font-family:'Orbitron',monospace;}
+.cart-item-qty{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.qty-btn{width:24px;height:24px;background:var(--bg3);border:1px solid var(--border);color:#fff;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.cart-total{padding-top:20px;border-top:1px solid var(--border);margin-top:auto;}
+.total-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;}
+.total-final{font-family:'Orbitron',monospace;font-size:20px;color:var(--cyan);}
+.checkout-btn{width:100%;background:linear-gradient(135deg,var(--blue),#0d5fd4);color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;margin-top:16px;transition:all .2s;}
+.checkout-btn:hover{transform:translateY(-2px);}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:60px 5% 30px;}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.8;margin-top:14px;}
+.footer-col h4{font-size:13px;font-weight:600;color:#fff;margin-bottom:16px;letter-spacing:1px;}
+.footer-links{list-style:none;}
+.footer-links li{margin-bottom:10px;}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--cyan);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);}
+.social-links{display:flex;gap:10px;}
+.social-link{width:34px;height:34px;border-radius:7px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);text-decoration:none;transition:all .2s;}
+.social-link:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg3);border:1px solid var(--border2);color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;z-index:999;transition:transform .3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* FILTERS */
+.filter-bar{display:flex;gap:10px;margin-bottom:36px;flex-wrap:wrap;align-items:center;}
+.filter-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 18px;border-radius:20px;font-size:13px;cursor:pointer;font-family:'Cairo',sans-serif;transition:all .2s;}
+.filter-btn:hover,.filter-btn.active{background:rgba(0,212,255,0.08);border-color:var(--border2);color:var(--cyan);}
+.search-input{flex:1;max-width:280px;background:var(--bg3);border:1px solid var(--border);color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;font-family:'Cairo',sans-serif;outline:none;}
+.search-input::placeholder{color:var(--muted);}
+.search-input:focus{border-color:var(--border2);}
+
+/* ANIMATIONS */
+.fade-up{opacity:0;transform:translateY(30px);transition:opacity .6s,transform .6s;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+
+/* WHATSAPP */
+.wa-btn{position:fixed;bottom:30px;right:30px;width:54px;height:54px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;z-index:100;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:transform .2s;}
+.wa-btn:hover{transform:scale(1.1);}
+
+@media(max-width:768px){
+  .cat-grid,.products-grid{grid-template-columns:1fr 1fr;}
+  .features-grid{grid-template-columns:1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .hero-stats{display:none;}
+  .cart-sidebar{width:100%;left:-100%;}
+}
+@media(max-width:480px){
+  .cat-grid,.products-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="bg-grid"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-ring">
+        <svg width="22" height="12" viewBox="0 0 110 50" fill="none">
+          <path d="M5 46L22 4L39 46" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="12" y1="30" x2="32" y2="30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+          <path d="M48 4L66 25L84 4" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M48 46L66 25L84 46" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="100" cy="25" r="8" stroke="#00d4ff" stroke-width="3.5" fill="none"/>
+          <circle cx="100" cy="25" r="2.5" fill="#00d4ff"/>
+          <line x1="103" y1="22" x2="106" y2="19" stroke="#00d4ff" stroke-width="2.5"/>
+          <line x1="97" y1="22" x2="94" y2="19" stroke="#00d4ff" stroke-width="2.5"/>
+          <line x1="103" y1="28" x2="106" y2="31" stroke="#00d4ff" stroke-width="2.5"/>
+          <line x1="97" y1="28" x2="94" y2="31" stroke="#00d4ff" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <span class="nav-brand">AXON</span>
+    </a>
+    <div class="nav-links" id="nav-links">
+      <a href="#home" class="nav-link active" data-ar="الرئيسية" data-en="Home">الرئيسية</a>
+      <a href="#products" class="nav-link" data-ar="المنتجات" data-en="Products">المنتجات</a>
+      <a href="#categories" class="nav-link" data-ar="الفئات" data-en="Categories">الفئات</a>
+      <a href="#contact" class="nav-link" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</a>
+    </div>
+    <div class="nav-actions">
+      <button class="lang-toggle" id="lang-btn" onclick="toggleLang()">EN</button>
+      <button class="cart-btn" onclick="toggleCart()">
+        🛒
+        <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <svg class="hero-lines" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;">
+    <line x1="0" y1="350" x2="200" y2="350" stroke="#00d4ff" stroke-width="0.5"/>
+    <line x1="200" y1="350" x2="260" y2="280" stroke="#00d4ff" stroke-width="0.5"/>
+    <line x1="260" y1="280" x2="400" y2="280" stroke="#00d4ff" stroke-width="0.5"/>
+    <circle cx="200" cy="350" r="3" fill="#00d4ff" opacity="0.6"/>
+    <circle cx="260" cy="280" r="3" fill="#00d4ff" opacity="0.6"/>
+    <line x1="1200" y1="200" x2="1000" y2="200" stroke="#00d4ff" stroke-width="0.5"/>
+    <line x1="1000" y1="200" x2="940" y2="260" stroke="#00d4ff" stroke-width="0.5"/>
+    <circle cx="1000" cy="200" r="3" fill="#00d4ff" opacity="0.6"/>
+    <line x1="0" y1="500" x2="150" y2="500" stroke="#1a6ef2" stroke-width="0.5"/>
+    <circle cx="150" cy="500" r="2" fill="#1a6ef2" opacity="0.5"/>
+    <line x1="1200" y1="450" x2="1050" y2="450" stroke="#1a6ef2" stroke-width="0.5"/>
+    <circle cx="1050" cy="450" r="2" fill="#1a6ef2" opacity="0.5"/>
+  </svg>
+  <div class="hero-content">
+    <div class="hero-tag" data-ar="⚡ أدوات الجيمنج الاحترافية" data-en="⚡ Professional Gaming Gear">⚡ أدوات الجيمنج الاحترافية</div>
+    <h1 class="hero-title">
+      <span data-ar="العب بلا" data-en="Play Without">العب بلا</span><br>
+      <span class="accent" data-ar="حدود." data-en="Limits.">حدود.</span>
+    </h1>
+    <p class="hero-sub" data-ar="ماوس، كيبورد، وسماعات احترافية مصممة للفائزين. أداء لا يتوقف، تصميم لا يُنسى." data-en="Professional mice, keyboards, and headsets designed for winners. Performance that never stops, design that's unforgettable.">ماوس، كيبورد، وسماعات احترافية مصممة للفائزين. أداء لا يتوقف، تصميم لا يُنسى.</p>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary" data-ar="تسوق الآن" data-en="Shop Now">تسوق الآن</a>
+      <a href="#categories" class="btn-outline" data-ar="استعرض الفئات" data-en="Browse Categories">استعرض الفئات</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">500+</div><div class="stat-label" data-ar="منتج" data-en="Products">منتج</div></div>
+    <div class="stat"><div class="stat-num">10K+</div><div class="stat-label" data-ar="عميل سعيد" data-en="Happy Clients">عميل سعيد</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label" data-ar="دعم فوري" data-en="Support">دعم فوري</div></div>
+  </div>
+  <div class="hero-scroll">
+    <span data-ar="اسحب للأسفل" data-en="Scroll Down">اسحب للأسفل</span>
+    <span>↓</span>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories fade-up" id="categories">
+  <div class="section-header">
+    <div class="section-tag" data-ar="SHOP BY CATEGORY">SHOP BY CATEGORY</div>
+    <h2 class="section-title" data-ar="تسوق حسب الفئة" data-en="Shop by Category">تسوق حسب الفئة</h2>
+    <p class="section-sub" data-ar="اختر من أفضل أدوات الجيمنج الاحترافية" data-en="Choose from the best professional gaming gear">اختر من أفضل أدوات الجيمنج الاحترافية</p>
+  </div>
+  <div class="cat-grid">
+    <a class="cat-card" href="#products" onclick="filterCat('mouse')">
+      <span class="cat-icon">🖱️</span>
+      <div class="cat-name">MICE</div>
+      <div class="cat-name-ar" data-ar="ماوس جيمنج" data-en="Gaming Mice">ماوس جيمنج</div>
+      <div class="cat-count" data-ar="12 منتج متاح" data-en="12 Products Available">12 منتج متاح</div>
+      <div class="cat-arrow">←</div>
+      <div class="cat-line"></div>
+    </a>
+    <a class="cat-card" href="#products" onclick="filterCat('keyboard')">
+      <span class="cat-icon">⌨️</span>
+      <div class="cat-name">KEYBOARDS</div>
+      <div class="cat-name-ar" data-ar="كيبورد جيمنج" data-en="Gaming Keyboards">كيبورد جيمنج</div>
+      <div class="cat-count" data-ar="10 منتج متاح" data-en="10 Products Available">10 منتج متاح</div>
+      <div class="cat-arrow">←</div>
+      <div class="cat-line"></div>
+    </a>
+    <a class="cat-card" href="#products" onclick="filterCat('headset')">
+      <span class="cat-icon">🎧</span>
+      <div class="cat-name">HEADSETS</div>
+      <div class="cat-name-ar" data-ar="سماعات جيمنج" data-en="Gaming Headsets">سماعات جيمنج</div>
+      <div class="cat-count" data-ar="8 منتج متاح" data-en="8 Products Available">8 منتج متاح</div>
+      <div class="cat-arrow">←</div>
+      <div class="cat-line"></div>
+    </a>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="fade-up" id="products" style="background:var(--bg2);">
+  <div class="section-header">
+    <div class="section-tag">NEW ARRIVALS</div>
+    <h2 class="section-title" data-ar="أحدث المنتجات" data-en="Latest Products">أحدث المنتجات</h2>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCat('all')" data-ar="الكل" data-en="All">الكل</button>
+    <button class="filter-btn" onclick="filterCat('mouse')" data-ar="ماوس" data-en="Mice">ماوس</button>
+    <button class="filter-btn" onclick="filterCat('keyboard')" data-ar="كيبورد" data-en="Keyboards">كيبورد</button>
+    <button class="filter-btn" onclick="filterCat('headset')" data-ar="سماعات" data-en="Headsets">سماعات</button>
+    <input class="search-input" id="search-input" placeholder="🔍 ابحث عن منتج..." oninput="searchProducts()" data-placeholder-ar="🔍 ابحث عن منتج..." data-placeholder-en="🔍 Search products..."/>
+  </div>
+  <div class="products-grid" id="products-grid"></div>
+</section>
+
+<!-- FEATURES -->
+<section class="fade-up">
+  <div class="section-header">
+    <div class="section-tag">WHY AXON</div>
+    <h2 class="section-title" data-ar="لماذا AXON؟" data-en="Why AXON?">لماذا AXON؟</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">🚀</div>
+      <div class="feat-title" data-ar="توصيل سريع" data-en="Fast Delivery">توصيل سريع</div>
+      <div class="feat-sub" data-ar="توصيل لجميع مناطق عُمان خلال 24-48 ساعة" data-en="Delivery across Oman in 24-48 hours">توصيل لجميع مناطق عُمان خلال 24-48 ساعة</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🛡️</div>
+      <div class="feat-title" data-ar="ضمان أصالة" data-en="Authenticity Guaranteed">ضمان أصالة</div>
+      <div class="feat-sub" data-ar="جميع منتجاتنا أصلية 100% مع ضمان رسمي" data-en="All products are 100% original with official warranty">جميع منتجاتنا أصلية 100% مع ضمان رسمي</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">💬</div>
+      <div class="feat-title" data-ar="دعم 24/7" data-en="24/7 Support">دعم 24/7</div>
+      <div class="feat-sub" data-ar="فريق دعم متخصص عبر واتساب وتيليجرام" data-en="Specialized support team via WhatsApp and Telegram">فريق دعم متخصص عبر واتساب وتيليجرام</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">↩️</div>
+      <div class="feat-title" data-ar="إرجاع مجاني" data-en="Free Returns">إرجاع مجاني</div>
+      <div class="feat-sub" data-ar="إرجاع واستبدال مجاني خلال 7 أيام من الاستلام" data-en="Free returns and exchanges within 7 days of receipt">إرجاع واستبدال مجاني خلال 7 أيام من الاستلام</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="fade-up" id="contact" style="background:var(--bg2);">
+  <div class="section-header">
+    <div class="section-tag">GET IN TOUCH</div>
+    <h2 class="section-title" data-ar="تواصل معنا" data-en="Contact Us">تواصل معنا</h2>
+    <p class="section-sub" data-ar="نحن هنا للمساعدة — تواصل معنا عبر أي وسيلة" data-en="We're here to help — reach us through any channel">نحن هنا للمساعدة — تواصل معنا عبر أي وسيلة</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:600px;margin:0 auto;">
+    <a href="https://wa.me/96812345678" style="text-decoration:none;" target="_blank">
+      <div class="feat-card" style="cursor:pointer;">
+        <div class="feat-icon">💬</div>
+        <div class="feat-title">WhatsApp</div>
+        <div class="feat-sub">+968 1234 5678</div>
+      </div>
+    </a>
+    <a href="https://instagram.com/axon" style="text-decoration:none;" target="_blank">
+      <div class="feat-card" style="cursor:pointer;">
+        <div class="feat-icon">📸</div>
+        <div class="feat-title">Instagram</div>
+        <div class="feat-sub">@axon.om</div>
+      </div>
+    </a>
+    <a href="mailto:info@axon.om" style="text-decoration:none;">
+      <div class="feat-card" style="cursor:pointer;">
+        <div class="feat-icon">📧</div>
+        <div class="feat-title">Email</div>
+        <div class="feat-sub">info@axon.om</div>
+      </div>
+    </a>
+    <a href="https://t.me/axon" style="text-decoration:none;" target="_blank">
+      <div class="feat-card" style="cursor:pointer;">
+        <div class="feat-icon">✈️</div>
+        <div class="feat-title">Telegram</div>
+        <div class="feat-sub">@axon_store</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div class="nav-logo-ring">
+          <svg width="22" height="12" viewBox="0 0 110 50" fill="none">
+            <path d="M5 46L22 4L39 46" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="12" y1="30" x2="32" y2="30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+            <path d="M48 4L66 25L84 4" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M48 46L66 25L84 46" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="100" cy="25" r="8" stroke="#00d4ff" stroke-width="3.5" fill="none"/>
+            <circle cx="100" cy="25" r="2.5" fill="#00d4ff"/>
+          </svg>
+        </div>
+        <span class="nav-brand">AXON</span>
+      </div>
+      <p data-ar="وجهتك الأولى لأدوات الجيمنج الاحترافية في عُمان. جودة لا تُنافس، خدمة لا تُضاهى." data-en="Your first destination for professional gaming gear in Oman. Unmatched quality, unrivaled service.">وجهتك الأولى لأدوات الجيمنج الاحترافية في عُمان. جودة لا تُنافس، خدمة لا تُضاهى.</p>
+    </div>
+    <div class="footer-col">
+      <h4 data-ar="المنتجات" data-en="Products">المنتجات</h4>
+      <ul class="footer-links">
+        <li><a href="#" data-ar="ماوس جيمنج" data-en="Gaming Mice">ماوس جيمنج</a></li>
+        <li><a href="#" data-ar="كيبورد جيمنج" data-en="Gaming Keyboards">كيبورد جيمنج</a></li>
+        <li><a href="#" data-ar="سماعات جيمنج" data-en="Gaming Headsets">سماعات جيمنج</a></li>
+        <li><a href="#" data-ar="العروض" data-en="Deals">العروض</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-ar="الشركة" data-en="Company">الشركة</h4>
+      <ul class="footer-links">
+        <li><a href="#" data-ar="من نحن" data-en="About Us">من نحن</a></li>
+        <li><a href="#" data-ar="سياسة الإرجاع" data-en="Return Policy">سياسة الإرجاع</a></li>
+        <li><a href="#" data-ar="سياسة الخصوصية" data-en="Privacy Policy">سياسة الخصوصية</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-ar="تابعنا" data-en="Follow Us">تابعنا</h4>
+      <div class="social-links" style="flex-wrap:wrap;">
+        <a href="#" class="social-link" title="Instagram">📸</a>
+        <a href="#" class="social-link" title="TikTok">🎵</a>
+        <a href="#" class="social-link" title="Twitter">🐦</a>
+        <a href="#" class="social-link" title="WhatsApp">💬</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 AXON Gaming. <span data-ar="جميع الحقوق محفوظة." data-en="All rights reserved.">جميع الحقوق محفوظة.</span></span>
+    <span data-ar="🇴🇲 صُنع بشغف في عُمان" data-en="🇴🇲 Made with passion in Oman">🇴🇲 صُنع بشغف في عُمان</span>
+  </div>
+</footer>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h3 style="font-family:'Orbitron',monospace;font-size:16px;color:var(--cyan);" data-ar="🛒 سلة الشراء" data-en="🛒 Cart">🛒 سلة الشراء</h3>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty" data-ar="سلتك فارغة" data-en="Your cart is empty">سلتك فارغة 🛒</div>
+  </div>
+  <div class="cart-total" id="cart-total" style="display:none;">
+    <div class="total-row">
+      <span data-ar="المجموع الفرعي" data-en="Subtotal">المجموع الفرعي</span>
+      <span class="total-final" id="cart-subtotal">0.000 ر.ع</span>
+    </div>
+    <div class="total-row" style="color:var(--muted);">
+      <span data-ar="التوصيل" data-en="Delivery">التوصيل</span>
+      <span data-ar="مجاني" data-en="Free">مجاني</span>
+    </div>
+    <button class="checkout-btn" onclick="checkout()" data-ar="إتمام الطلب عبر واتساب ←" data-en="Order via WhatsApp ←">إتمام الطلب عبر واتساب ←</button>
+  </div>
+</div>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/96812345678" class="wa-btn" target="_blank" title="WhatsApp">💬</a>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const PRODUCTS=[
+  {id:1,nameAr:'لوجيتك G Pro X سوبرلايت',nameEn:'Logitech G Pro X Superlight',cat:'mouse',emoji:'🖱️',price:18.500,oldPrice:22.000,badge:'جديد',stars:5},
+  {id:2,nameAr:'رايزر ديث أدر V3',nameEn:'Razer DeathAdder V3',cat:'mouse',emoji:'🖱️',price:20.000,oldPrice:null,badge:null,stars:4},
+  {id:3,nameAr:'SteelSeries Rival 650',nameEn:'SteelSeries Rival 650',cat:'mouse',emoji:'🖱️',price:16.500,oldPrice:19.000,badge:'خصم',stars:4},
+  {id:4,nameAr:'هايبر إكس أولوي أوريجنز',nameEn:'HyperX Alloy Origins Core',cat:'keyboard',emoji:'⌨️',price:22.000,oldPrice:28.000,badge:'جديد',stars:5},
+  {id:5,nameAr:'رايزر بلاك ويدو V4',nameEn:'Razer BlackWidow V4',cat:'keyboard',emoji:'⌨️',price:35.000,oldPrice:null,badge:null,stars:5},
+  {id:6,nameAr:'SteelSeries Apex Pro',nameEn:'SteelSeries Apex Pro',cat:'keyboard',emoji:'⌨️',price:55.000,oldPrice:65.000,badge:'خصم',stars:5},
+  {id:7,nameAr:'هايبر إكس كلاود ألفا',nameEn:'HyperX Cloud Alpha',cat:'headset',emoji:'🎧',price:28.000,oldPrice:null,badge:'جديد',stars:5},
+  {id:8,nameAr:'لوجيتك G Pro X سماعة',nameEn:'Logitech G Pro X Headset',cat:'headset',emoji:'🎧',price:32.000,oldPrice:38.000,badge:'خصم',stars:4},
+  {id:9,nameAr:'SteelSeries Arctis Nova 7',nameEn:'SteelSeries Arctis Nova 7',cat:'headset',emoji:'🎧',price:45.000,oldPrice:null,badge:null,stars:5},
+];
+
+let cart=[];
+let lang='ar';
+let currentFilter='all';
+
+function renderProducts(filter='all'){
+  currentFilter=filter;
+  const q=document.getElementById('search-input').value.toLowerCase();
+  const grid=document.getElementById('products-grid');
+  const filtered=PRODUCTS.filter(p=>(filter==='all'||p.cat===filter)&&(p.nameAr.toLowerCase().includes(q)||p.nameEn.toLowerCase().includes(q)));
+  grid.innerHTML=filtered.map(p=>`
+    <div class="prod-card fade-up visible">
+      <div class="prod-img">${p.emoji}
+        ${p.badge?`<div class="prod-badge${p.badge==='خصم'?' sale':''}">${p.badge}</div>`:''}
+      </div>
+      <div class="prod-info">
+        <div class="prod-cat">${p.cat==='mouse'?'MICE':p.cat==='keyboard'?'KEYBOARDS':'HEADSETS'}</div>
+        <div class="prod-stars">${'★'.repeat(p.stars)}${'☆'.repeat(5-p.stars)}</div>
+        <div class="prod-name">${lang==='ar'?p.nameAr:p.nameEn}</div>
+        <div class="prod-name-en">${lang==='ar'?p.nameEn:p.nameAr}</div>
+        <div class="prod-footer">
+          <div>
+            ${p.oldPrice?`<span class="prod-price-old">${p.oldPrice.toFixed(3)} ر.ع</span>`:''}
+            <span class="prod-price">${p.price.toFixed(3)}</span>
+            <span style="font-size:11px;color:var(--muted)"> ر.ع</span>
+          </div>
+          <button class="add-cart" onclick="addToCart(${p.id})">${lang==='ar'?'أضف للسلة':'Add to Cart'}</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCat(cat){
+  currentFilter=cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    const bCat=b.getAttribute('onclick').match(/filterCat\('(.+)'\)/)?.[1];
+    b.classList.toggle('active',bCat===cat);
+  });
+  renderProducts(cat);
+  document.getElementById('products').scrollIntoView({behavior:'smooth'});
+}
+
+function searchProducts(){renderProducts(currentFilter);}
+
+function addToCart(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  const ex=cart.find(x=>x.id===id);
+  if(ex)ex.qty++;
+  else cart.push({...p,qty:1});
+  updateCart();
+  showToast(lang==='ar'?`✅ تمت إضافة ${p.nameAr} للسلة`:`✅ ${p.nameEn} added to cart`);
+}
+
+function updateCart(){
+  document.getElementById('cart-count').textContent=cart.reduce((a,b)=>a+b.qty,0);
+  const items=document.getElementById('cart-items');
+  const total=document.getElementById('cart-total');
+  if(!cart.length){
+    items.innerHTML=`<div class="cart-empty">${lang==='ar'?'سلتك فارغة 🛒':'Your cart is empty 🛒'}</div>`;
+    total.style.display='none';
+    return;
+  }
+  total.style.display='block';
+  items.innerHTML=cart.map(p=>`
+    <div class="cart-item">
+      <div class="cart-item-img">${p.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${lang==='ar'?p.nameAr:p.nameEn}</div>
+        <div class="cart-item-price">${p.price.toFixed(3)} ر.ع</div>
+        <div class="cart-item-qty">
+          <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
+          <span>${p.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${p.id},1)">+</button>
+          <button class="qty-btn" onclick="removeItem(${p.id})" style="margin-right:auto;color:#ef4444;">✕</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  const sub=cart.reduce((a,b)=>a+b.price*b.qty,0);
+  document.getElementById('cart-subtotal').textContent=sub.toFixed(3)+' ر.ع';
+}
+
+function changeQty(id,d){
+  const i=cart.findIndex(x=>x.id===id);
+  if(i<0)return;
+  cart[i].qty+=d;
+  if(cart[i].qty<=0)cart.splice(i,1);
+  updateCart();
+}
+
+function removeItem(id){cart=cart.filter(x=>x.id!==id);updateCart();}
+
+function toggleCart(){
+  document.getElementById('cart-overlay').classList.toggle('open');
+  document.getElementById('cart-sidebar').classList.toggle('open');
+}
+
+function checkout(){
+  if(!cart.length)return;
+  const lines=cart.map(p=>`• ${p.nameAr} x${p.qty} = ${(p.price*p.qty).toFixed(3)} ر.ع`).join('\n');
+  const total=cart.reduce((a,b)=>a+b.price*b.qty,0);
+  const msg=`🛒 طلب جديد من AXON Store:\n\n${lines}\n\n💰 الإجمالي: ${total.toFixed(3)} ر.ع\n\nأرجو تأكيد الطلب`;
+  window.open('https://wa.me/96812345678?text='+encodeURIComponent(msg),'_blank');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function toggleLang(){
+  lang=lang==='ar'?'en':'ar';
+  document.documentElement.setAttribute('lang',lang);
+  document.documentElement.setAttribute('dir',lang==='ar'?'rtl':'ltr');
+  document.getElementById('lang-btn').textContent=lang==='ar'?'EN':'AR';
+  document.querySelectorAll('[data-ar],[data-en]').forEach(el=>{
+    const val=el.getAttribute('data-'+lang);
+    if(val)el.textContent=val;
+  });
+  const si=document.getElementById('search-input');
+  si.placeholder=si.getAttribute('data-placeholder-'+lang)||si.placeholder;
+  renderProducts(currentFilter);
+  updateCart();
+}
+
+// CURSOR
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+document.addEventListener('mousemove',e=>{
+  cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';
+  ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';
+});
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='16px';cur.style.height='16px';ring.style.width='50px';ring.style.height='50px';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';ring.style.width='30px';ring.style.height='30px';});
+});
+
+// SCROLL ANIMATIONS
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// NAV ACTIVE ON SCROLL
+window.addEventListener('scroll',()=>{
+  const sections=['home','categories','products','contact'];
+  let cur2='home';
+  sections.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&el.getBoundingClientRect().top<100)cur2=id;
+  });
+  document.querySelectorAll('.nav-link').forEach(a=>{
+    a.classList.toggle('active',a.getAttribute('href')==='#'+cur2);
+  });
+});
+
+renderProducts('all');
+</script>
+</body>
+</html>
